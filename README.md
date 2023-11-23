@@ -1,9 +1,9 @@
-Merhaba Arkadaşlar,
+Hello Friends,
 
-"Token Joinner v1" uygulamasını, bizim tarafımızdan kodlanmış olmasına rağmen, başka bir kullanıcı tarafından farklı platformlarda satılmış ve kullanıcılara dağıtılmış. Bu durum, kaynak kodunu sizlerle paylaşma kararı almamıza neden oldu. Her zaman ana satıcının ürününü tercih etmenizi tavsiye ederiz, böylece diğer satıcıların eklediği olası güvenlik sorunlarından kaçınmış olursunuz.
+Although the 'Token Joinner v1' application has been coded by us, it has been sold and distributed on different platforms by another user. This situation has led us to the decision to share the source code with you. We always recommend choosing the main seller's product to avoid possible security issues added by other sellers.
 
-Ayrıca, yakın gelecekte "Token Joinner" uygulamasının v4 sürümünü satışa sunmayı planlıyoruz. Bu güncelleme hakkında daha fazla bilgi verilecektir.
+In addition, we plan to release version 4 of the 'Token Joinner' application in the near future. More information about this update will be provided.
 
-Sahte satıcılardan korunmak ve güncellemelerden haberdar olmak için bizi takip etmeye devam edin. İyi kullanımlar dileriz!
+Keep following us to protect yourself from fake sellers and stay informed about updates. We wish you a great user experience!
 
 Discord Server: https://discord.gg/dctoken
