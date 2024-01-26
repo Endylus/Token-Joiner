@@ -7,3 +7,4 @@ In addition, we plan to release version 4 of the 'Token Joinner' application in 
 Keep following us to protect yourself from fake sellers and stay informed about updates. We wish you a great user experience!
 
 Discord Server: https://discord.gg/dctoken
+Setup: https://streamable.com/yht66g
