@@ -2,7 +2,7 @@
   "name": "token-joiner",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,8 +10,6 @@
   "author": "ENDY",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.4.0",
-    "discord-oauth2-api": "^1.1.2",
     "discord.js": "^14.11.0",
     "express": "^4.18.2",
     "node-fetch": "^2.6.7",

@@ -1,0 +1,11 @@
+{
+    "inviteUrl": "https://discord.gg/dctoken",
+    "bot": {
+        "token": "BOT_TOKEN",
+        "secret": "SECRET_CODE"
+    },
+    "web": {
+        "url": "http://localhost",
+        "port": 443
+    }
+}

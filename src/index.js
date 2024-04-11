@@ -1,67 +1,100 @@
-// https://discord.gg/dctoken
-const express = require('express')
-const app = express()
-const port = 3001
-const { web, bot, data } = require("../config.js");
+const express = require('express');
+const fetch = require('node-fetch');
+const { Client, GatewayIntentBits } = require('discord.js');
+const { web, bot, inviteUrl } = require("../config.json");
+const start = require('./main.js');
 
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
+const app = express();
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const port = web.port;
+let guildId;
+let botId;
 
-const axios = require('axios').default;
+// Zaman fonksiyonu
+function getCurrentTime() {
+  return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+}
 
+// Discord'a bağlanma ve sunucu bilgisini alma
+async function connectToDiscord() {
+  await client.login(bot.token);
+  client.on('ready', async () => {
+    console.log(`[Server Join Process] ${getCurrentTime()} - ${client.user.tag} ready!`);
+    const server = inviteUrl;
+    const inviteLink = server.split('/').pop();
+    const inviteData = await fetch(`https://discordapp.com/api/v9/invites/${inviteLink}`).then(res => res.json());
+    if (inviteData.code == 10006) return console.log(`[ERROR] ${getCurrentTime()} - Invalid Invite Link!`);
+    guildId = inviteData.guild.id;
+    botId = client.user.id;
+    const guild = client.guilds.cache.get(inviteData.guild.id);
+    if (!guild) return console.log(`[ERROR] ${getCurrentTime()} - Couldn't find the guild with ID: ${inviteData.guild.id}`);
+
+    const guildName = guild.name;
+    const memberCount = guild.memberCount;
+    console.log(`\nServer Information\n-----------------------------\nServer Name: ${guildName}\nMember Count: ${memberCount}\nInvite URL: ${server}\n-----------------------------\n`);
+    start();
+  });
+}
+
+// Discord token almak için OAuth2 işlemi
+async function getDiscordToken(code) {
+  const tokenResponseData = await fetch('https://discord.com/api/oauth2/token', {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      client_id: botId,
+      client_secret: bot.secret,
+      code: code,
+      grant_type: 'authorization_code',
+      redirect_uri: `${web.url}:${port}`,
+      scope: 'identify',
+    }),
+    method: 'POST'
+  }).then(res => res.json());
+  return tokenResponseData;
+}
+
+// Discord kullanıcı bilgisini almak
+async function getDiscordUser(token) {
+  const userResponseData = await fetch('https://discord.com/api/users/@me', {
+    headers: {
+      authorization: `${token.token_type} ${token.access_token}`
+    },
+    method: 'GET'
+  }).then(res => res.json());
+  return userResponseData;
+}
+
+// Ana endpoint
 app.get('/', async (req, res) => {
   try {
-    let query = req.query.code
-    if (!query) return res.status(404).send("Not Found Code")
+    const code = req.query.code;
+    if (!code) return res.status(404).json({ joined: false, message: "Not Found Code" });
 
-    const tokenResponseData = await axios({
-      method: 'POST',
-      url: 'https://discord.com/api/oauth2/token',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: new URLSearchParams({
-        client_id: bot.id,
-        client_secret: bot.secret,
-        code: query,
-        grant_type: 'authorization_code',
-        redirect_uri: `${web.url}`,
-        scope: 'identify',
-      }).toString()
-    }).then(x => x.data);
+    const tokenResponseData = await getDiscordToken(code);
+    if (!tokenResponseData) return res.status(404).json({ joined: false, message: "Not Found Code" });
 
-    if (!tokenResponseData) return res.status(404).send("Not Found Code")
+    const userResponseData = await getDiscordUser(tokenResponseData);
+    if (!userResponseData) return res.status(404).json({ joined: false, message: "Not Found User" });
 
-    const userResponseData = await axios({
-      method: 'GET',
-      url: 'https://discord.com/api/users/@me',
-      headers: {
-        authorization: `${tokenResponseData.token_type} ${tokenResponseData.access_token}`
-      }
-    }).then(x => x.data);
-
-    if (!userResponseData) return res.status(404).send("Not Found Code")
-
-    let guild = client.guilds.cache.get(data.guildId)
-    if (!guild) return res.status(404).json({ joined: false, message: "Not Found Guild" })
+    const guild = client.guilds.cache.get(guildId);
+    if (!guild) return res.status(404).json({ joined: false, message: "Not Found Guild" });
 
     guild.members.add(userResponseData.id, { accessToken: tokenResponseData.access_token }).then(() => {
-      res.status(200).json({ joined: true, message: `[Endy - Bot] ${userResponseData.username}#${userResponseData.discriminator} (${userResponseData.id}) joined the server!` })
+      res.status(200).json({ joined: true, message: "Joined the server!" });
     }).catch(err => {
-      res.status(404).json({ joined: false, message: `[Endy - Bot] ${userResponseData.username}#${userResponseData.discriminator} (${userResponseData.id}) Failed join the server! - ` + err.message })
-    })
+      if (err.message == "Cannot read properties of undefined (reading 'id')") {
+        return res.status(404).json({ joined: false, message: "Already Joined" });
+      }
+      res.status(404).json({ joined: false, message: err.message });
+    });
   } catch (err) {
-    res.status(404).send("Not Found Code")
+    res.status(404).json({ joined: false, message: err.message });
   }
-})
+});
 
+// Sunucuya bağlanma ve dinleme
 app.listen(port, () => {
-  client.login(bot.token)
-  client.on('ready', () => {
-    console.log(`[Endy - Bot] ${client.user.tag} ready!`);
-    setTimeout(() => {
-      require('./main.js')
-    }, 3000);
-  });
-})
-// https://discord.gg/dctoken
+  connectToDiscord();
+});

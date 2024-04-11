@@ -1,10 +1,72 @@
-Hello Friends,
+# Discord oauth2 token joiner
 
-Although the 'Token Joinner v1' application has been coded by us, it has been sold and distributed on different platforms by another user. This situation has led us to the decision to share the source code with you. We always recommend choosing the main seller's product to avoid possible security issues added by other sellers.
+Bu proje, Discord OAuth2 yetkilendirme protokolünü kullanarak bot aracılığıyla sunuculara tokenlerin eklenmesini sağlar.
 
-In addition, we plan to release version 4 of the 'Token Joinner' application in the near future. More information about this update will be provided.
+## Config
 
-Keep following us to protect yourself from fake sellers and stay informed about updates. We wish you a great user experience!
+1. Go to [Discord developers](https://discord.com/developers/applications).
 
-Discord Server: https://discord.gg/dctoken
-Setup: https://streamable.com/yht66g
+A. **Create Bot**
+
+![botCreate](https://github.com/Endylus/test/assets/122468378/6012e34e-47cf-412d-94d7-23162d956dd7)
+
+B. **Get Secret Code**
+
+![getScretCode](https://github.com/Endylus/test/assets/122468378/8a88c340-6d4d-4f03-87a8-3467e060cb39)
+
+C. **Add Redirects**
+
+![addRedirects](https://github.com/Endylus/test/assets/122468378/e4aeed6c-bf7a-46de-ba0a-0840ecc20802)
+
+D. **Enable Intents**
+
+![Intents](https://github.com/Endylus/test/assets/122468378/48e61c6f-7088-486f-bd07-f7965a086869)
+
+E. **Get the Token**
+
+![getToken](https://github.com/Endylus/test/assets/122468378/4d8b7e15-7bce-4fba-a64f-0aa3f9ddff48)
+
+2. `config.json` Edit the file to configure the program. An example configuration is as follows:
+
+```json
+{
+    "inviteUrl": "https://discord.gg/dctoken",
+    "bot": {
+        "token": "TOKEN",
+        "secret": "SECRET_CODE"
+    },
+    "web": {
+        "url": "http://localhost",
+        "port": 443
+    }
+}
+```
+
+- `inviteUrl`: Invite link to join the server. For example: `https://discord.gg/dctoken`, `dctoken`
+- `bot.token`: Your Discord bot's token.
+- `bot.secret`: Your Discord bot's secret code.
+- `web.url`: The web address where the program will run. For example: `http://localhost`.
+- `web.port`: The port number on which the program will run. The recommended value is usually `443`
+
+## Installation
+
+- Install Node.js - [Download](https://nodejs.org/dist/v20.11.0/node-v20.11.0-x64.msi)
+
+1. Install the required packages:
+
+```
+npm install
+```
+
+2. Run the script:
+
+```
+node .
+```
+
+## Disclaimer
+No responsibility is accepted for any issues arising from the use of this project and its content. The project is the responsibility of users to configure and use on their own systems. Users should take necessary precautions and follow configuration instructions correctly before using the project.
+
+## Support
+
+If you have any questions, feel free to join my Discord server: [https://discord.gg/dctoken](https://discord.gg/dctoken)
