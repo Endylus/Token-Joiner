@@ -1,6 +1,6 @@
 # Discord oauth2 token joiner
 
-Bu proje, Discord OAuth2 yetkilendirme protokolünü kullanarak bot aracılığıyla sunuculara tokenlerin eklenmesini sağlar.
+This project allows adding tokens to servers via bots using the Discord OAuth2 authorization protocol.
 
 ## Config
 
