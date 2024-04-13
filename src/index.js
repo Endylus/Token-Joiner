@@ -2,7 +2,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { web, bot, inviteUrl } = require("../config.json");
-const start = require('./main.js');
+const authorizeTokens = require('./main.js');
 
 const app = express();
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -32,7 +32,7 @@ async function connectToDiscord() {
     const guildName = guild.name;
     const memberCount = guild.memberCount;
     console.log(`\nServer Information\n-----------------------------\nServer Name: ${guildName}\nMember Count: ${memberCount}\nInvite URL: ${server}\n-----------------------------\n`);
-    start();
+   authorizeTokens(botId);
   });
 }
 
