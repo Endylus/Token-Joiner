@@ -17,7 +17,7 @@ let notJoined = 0;
 let alreadyJoined = 0;
 let invalidFormat = 0;
 
-async function authorizeTokens() {
+async function authorizeTokens(botId) {
   if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   try {
     for (let i = 0; i < tokens.length; i++) {
@@ -34,7 +34,8 @@ async function authorizeTokens() {
       const tkn = tokenParts[index];
       try {
         let startTime = new Date();
-        let data = await fetch(`https://discord.com/api/oauth2/authorize?client_id=${config.bot.id}&redirect_uri=http%3A%2F%2Flocalhost%3A3001&response_type=code&scope=identify%20email%20guilds.join`, {
+        const decodedURL = decodeURIComponent(`https://discord.com/api/oauth2/authorize?client_id=${botId}&redirect_uri=${config.web.url}:${config.web.port}&response_type=code&scope=identify+guilds.join`);
+        let data = await fetch(decodedURL, {
           headers: { authorization: tkn, "content-type": "application/json" },
           body: JSON.stringify({ permissions: "0", authorize: true }),
           method: "POST"
