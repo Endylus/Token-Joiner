@@ -4,7 +4,7 @@ This project allows adding tokens to servers via bots using the Discord OAuth2 a
 
 ## Config
 
-1. Go to [Discord developers](https://discord.com/developers/applications).
+1. Go to [Discord developers](https://discord.com/developers/applications)
 
 A. **Create Bot**
 
@@ -14,7 +14,7 @@ B. **Get Secret Code**
 
 ![getScretCode](https://github.com/Endylus/test/assets/122468378/8a88c340-6d4d-4f03-87a8-3467e060cb39)
 
-C. **Add Redirects**
+C. **Add Redirects** (http://url:port)
 
 ![addRedirects](https://github.com/Endylus/test/assets/122468378/e4aeed6c-bf7a-46de-ba0a-0840ecc20802)
 
