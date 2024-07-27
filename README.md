@@ -69,4 +69,4 @@ No responsibility is accepted for any issues arising from the use of this projec
 
 ## Support
 
-If you have any questions, feel free to join my Discord server: [https://discord.gg/dctoken](https://discord.gg/dctoken)
+If you have any questions, feel free to join my Discord server: [https://discord.gg/tokenverse](https://discord.gg/tokenverse)
