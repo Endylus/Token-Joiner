@@ -30,7 +30,7 @@ E. **Get the Token**
 
 ```json
 {
-    "inviteUrl": "https://discord.gg/dctoken",
+    "inviteUrl": "https://discord.gg/tokenverse",
     "bot": {
         "token": "TOKEN",
         "secret": "SECRET_CODE"
@@ -42,7 +42,7 @@ E. **Get the Token**
 }
 ```
 
-- `inviteUrl`: Invite link to join the server. For example: `https://discord.gg/dctoken`, `dctoken`
+- `inviteUrl`: Invite link to join the server. For example: `https://discord.gg/tokenverse`, `tokenverse`
 - `bot.token`: Your Discord bot's token.
 - `bot.secret`: Your Discord bot's secret code.
 - `web.url`: The web address where the program will run. For example: `http://localhost`.
