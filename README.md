@@ -6,25 +6,10 @@ This project allows adding tokens to servers via bots using the Discord OAuth2 a
 
 1. Go to [Discord developers](https://discord.com/developers/applications)
 
-A. **Create Bot**
 
-![botCreate](https://github.com/Endylus/test/assets/122468378/6012e34e-47cf-412d-94d7-23162d956dd7)
 
-B. **Get Secret Code**
+https://github.com/user-attachments/assets/a672aba6-f54f-493d-baf5-425d07e52c42
 
-![getScretCode](https://github.com/Endylus/test/assets/122468378/8a88c340-6d4d-4f03-87a8-3467e060cb39)
-
-C. **Add Redirects** (http://url:port)
-
-![addRedirects](https://github.com/Endylus/test/assets/122468378/e4aeed6c-bf7a-46de-ba0a-0840ecc20802)
-
-D. **Enable Intents**
-
-![Intents](https://github.com/Endylus/test/assets/122468378/48e61c6f-7088-486f-bd07-f7965a086869)
-
-E. **Get the Token**
-
-![getToken](https://github.com/Endylus/test/assets/122468378/4d8b7e15-7bce-4fba-a64f-0aa3f9ddff48)
 
 2. `config.json` Edit the file to configure the program. An example configuration is as follows:
 
