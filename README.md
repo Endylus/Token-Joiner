@@ -30,23 +30,21 @@ E. **Get the Token**
 
 ```json
 {
-    "inviteUrl": "https://discord.gg/tokenverse",
-    "bot": {
-        "token": "TOKEN",
-        "secret": "SECRET_CODE"
-    },
-    "web": {
-        "url": "http://localhost",
-        "port": 443
-    }
+  "token": "TOKEN",
+  "secret": "SECRET_CODE",
+
+  "host": "http://localhost",
+  "port": "443",
+  
+  "invite_link": "https://discord.gg/tokenverse"
 }
 ```
 
-- `inviteUrl`: Invite link to join the server. For example: `https://discord.gg/tokenverse`, `tokenverse`
-- `bot.token`: Your Discord bot's token.
-- `bot.secret`: Your Discord bot's secret code.
-- `web.url`: The web address where the program will run. For example: `http://localhost`.
-- `web.port`: The port number on which the program will run. The recommended value is usually `443`
+- `token`: Your Discord bot's token.
+- `secret`: Your Discord bot's secret code.
+- `host`: The web address where the program will run. For example: `http://localhost`.
+- `port`: The port number on which the program will run. The recommended value is usually `443`
+- `invite_link`: Invite link to join the server. For example: `https://discord.gg/tokenverse`, `tokenverse`
 
 ## Installation
 

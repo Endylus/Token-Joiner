@@ -1,100 +1,107 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const { Client, GatewayIntentBits } = require('discord.js');
-const { web, bot, inviteUrl } = require("../config.json");
-const authorizeTokens = require('./main.js');
+const authorizeTokens = require('./utils/authorizeTokens');
+const Logger = require("@endylus/logger");
+const log = new Logger({ filesLog: false });
+const config = require("../../input/config.json");
 
 const app = express();
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const port = web.port;
+const port = config.port;
 let guildId;
 let botId;
 
-// Zaman fonksiyonu
-function getCurrentTime() {
-  return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-}
-
-// Discord'a bağlanma ve sunucu bilgisini alma
 async function connectToDiscord() {
-  await client.login(bot.token);
-  client.on('ready', async () => {
-    console.log(`[Server Join Process] ${getCurrentTime()} - ${client.user.tag} ready!`);
-    const server = inviteUrl;
+  try {
+    await client.login(config.token);
+    const server = config.invite_link;
     const inviteLink = server.split('/').pop();
     const inviteData = await fetch(`https://discordapp.com/api/v9/invites/${inviteLink}`).then(res => res.json());
-    if (inviteData.code == 10006) return console.log(`[ERROR] ${getCurrentTime()} - Invalid Invite Link!`);
+
+    if (inviteData.code === 10006) return log.error(`Invalid Invite Code: ${inviteLink}`);
+
     guildId = inviteData.guild.id;
     botId = client.user.id;
-    const guild = client.guilds.cache.get(inviteData.guild.id);
-    if (!guild) return console.log(`[ERROR] ${getCurrentTime()} - Couldn't find the guild with ID: ${inviteData.guild.id}`);
+    const guild = client.guilds.cache.get(guildId);
 
-    const guildName = guild.name;
-    const memberCount = guild.memberCount;
-    console.log(`\nServer Information\n-----------------------------\nServer Name: ${guildName}\nMember Count: ${memberCount}\nInvite URL: ${server}\n-----------------------------\n`);
-   authorizeTokens(botId);
-  });
+    if (!guild) return log.error(`Couldn't find the guild with ID: ${guildId}`);
+
+    log.info(`Connected to Guild: ${guild.name}`);
+    log.info(`Guild ID: ${guildId}`);
+    log.info(`Member Count: ${guild.memberCount}`);
+    log.info(`Invite URL: ${server}`);
+
+    authorizeTokens(botId);
+  } catch (error) {
+    log.error(`Failed to connect to Discord: ${error.message}`);
+  }
 }
 
-// Discord token almak için OAuth2 işlemi
 async function getDiscordToken(code) {
-  const tokenResponseData = await fetch('https://discord.com/api/oauth2/token', {
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-      client_id: botId,
-      client_secret: bot.secret,
-      code: code,
-      grant_type: 'authorization_code',
-      redirect_uri: `${web.url}:${port}`,
-      scope: 'identify',
-    }),
-    method: 'POST'
-  }).then(res => res.json());
-  return tokenResponseData;
+  try {
+    const tokenResponseData = await fetch('https://discord.com/api/oauth2/token', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: botId,
+        client_secret: config.secret,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: `${config.host}:${port}`,
+        scope: 'identify',
+      }),
+      method: 'POST'
+    }).then(res => res.json());
+    return tokenResponseData;
+  } catch (error) {
+    return { error: error.message }
+  }
 }
 
-// Discord kullanıcı bilgisini almak
 async function getDiscordUser(token) {
-  const userResponseData = await fetch('https://discord.com/api/users/@me', {
-    headers: {
-      authorization: `${token.token_type} ${token.access_token}`
-    },
-    method: 'GET'
-  }).then(res => res.json());
-  return userResponseData;
+  try {
+    const userResponseData = await fetch('https://discord.com/api/users/@me', {
+      headers: {
+        authorization: `${token.token_type} ${token.access_token}`
+      },
+      method: 'GET'
+    }).then(res => res.json());
+    return userResponseData;
+  } catch (error) {
+    return { error: error.message }
+  }
 }
 
-// Ana endpoint
 app.get('/', async (req, res) => {
   try {
     const code = req.query.code;
-    if (!code) return res.status(404).json({ joined: false, message: "Not Found Code" });
+    if (!code) return res.status(404).json({ joined: false, message: `Request missing 'code' parameter` });
 
-    const tokenResponseData = await getDiscordToken(code);
-    if (!tokenResponseData) return res.status(404).json({ joined: false, message: "Not Found Code" });
+    const tokenResponseData = await getDiscordToken(code);    
+    if (tokenResponseData.error) return res.status(404).json({ joined: false, message: `Reason: ${tokenResponseData.error}` });
 
     const userResponseData = await getDiscordUser(tokenResponseData);
-    if (!userResponseData) return res.status(404).json({ joined: false, message: "Not Found User" });
+    if (tokenResponseData.error) return res.status(404).json({ joined: false, message: `Reason: ${tokenResponseData.error}` });
 
     const guild = client.guilds.cache.get(guildId);
-    if (!guild) return res.status(404).json({ joined: false, message: "Not Found Guild" });
+    if (!guild) return res.status(404).json({ joined: false, message: `Couldn't find the guild with ID: ${guildId}` });
 
-    guild.members.add(userResponseData.id, { accessToken: tokenResponseData.access_token }).then(() => {
-      res.status(200).json({ joined: true, message: "Joined the server!" });
-    }).catch(err => {
-      if (err.message == "Cannot read properties of undefined (reading 'id')") {
-        return res.status(404).json({ joined: false, message: "Already Joined" });
-      }
-      res.status(404).json({ joined: false, message: err.message });
-    });
+    guild.members.add(userResponseData.id, { accessToken: tokenResponseData.access_token })
+      .then(() => {
+        res.status(200).json({ joined: true, message: "Joined the server!" });
+      }).catch(err => {
+        console.log(err);
+        if (err.message === "Cannot read properties of undefined (reading 'id')") return res.status(404).json({ joined: false, message: "Already Joined" });
+        res.status(404).json({ joined: false, message: err.message });
+      });
   } catch (err) {
-    res.status(404).json({ joined: false, message: err.message });
+    res.status(404).json({ joined: false, message: `Request failed: ${err.message}` });
   }
 });
 
-// Sunucuya bağlanma ve dinleme
 app.listen(port, () => {
+  log.info(`Server listening on port ${port}`);
   connectToDiscord();
 });
